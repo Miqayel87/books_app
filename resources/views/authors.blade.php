@@ -37,6 +37,7 @@
                 <tbody>
                 @foreach($authors as $author)
                     <tr>
+                        <td>{{$author->id}}</td>
                         <td>{{$author->first_name}}</td>
                         <td>{{$author->last_name}}</td>
                         <td>{{$author->biography}}</td>
