@@ -3,44 +3,44 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\CreateAuthorRequest;
-use App\Http\Requests\CreateBookRequest;
-use App\Models\author;
-use App\Models\book;
+use App\Models\Author;
 use Illuminate\Http\Request;
 
 class AuthorController extends Controller
 {
-    public function index(){
+    public function index()
+    {
         $authors = Author::all();
-        return view('authors', ['authors'=>$authors]);
+        return view('authors.index', compact('authors'));
     }
 
-    public function create(CreateAuthorRequest $request){
-        $newAuthor = new Author;
-
-        $newAuthor->first_name = $request->first_name;
-        $newAuthor->last_name = $request->last_name;
-        $newAuthor->biography = $request->biography;
-
-        $newAuthor->save();
-
-        return redirect()->back();
+    public function create()
+    {
+        return view('authors.create');
     }
 
-    public function update($id, CreateAuthorRequest $request){
-        $authorToUpdate = Author::where('id', $id)->first();
-
-        $authorToUpdate->first_name = $request->first_name;
-        $authorToUpdate->last_name = $request->last_name;
-        $authorToUpdate->biography = $request->biography;
-
-        $authorToUpdate->save();
-
-        return redirect()->back();
+    public function store(CreateAuthorRequest $request)
+    {
+        Author::create($request->validated());
+        return redirect()->route('authors.index');
     }
 
-    public function delete($id){
-        Author::where('id', $id)->delete();
-        return redirect()->back();
+    public function edit($id)
+    {
+        $author = Author::findOrFail($id);
+        return view('authors.edit', compact('author'));
+    }
+
+    public function update(CreateAuthorRequest $request, $id)
+    {
+        $author = Author::findOrFail($id);
+        $author->update($request->validated());
+        return redirect()->route('authors.index');
+    }
+
+    public function destroy($id)
+    {
+        Author::findOrFail($id)->delete();
+        return redirect()->route('authors.index');
     }
 }

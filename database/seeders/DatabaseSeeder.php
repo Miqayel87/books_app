@@ -19,11 +19,7 @@ class DatabaseSeeder extends Seeder
             AuthorSeeder::class,
             BookSeeder::class,
             BookAuthorSeeder::class,
-        ]);
-
-        User::create([
-            'login' => 'login',
-            'password' => '$2y$10$tSHMCrv1FxyIUwauRAZbxeCacqiM9wHHIZ9EStG4K5iPN320DWjc6',
+            UserSeeder::class
         ]);
     }
 }

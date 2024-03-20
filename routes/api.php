@@ -20,15 +20,4 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
 
-Route::group(['prefix' => 'book'], function () {
-    Route::post('/create', [BookController::class, 'create'])->name('book.create');
-    Route::put('/update/{id}', [BookController::class, 'update'])->name('book.update');
-    Route::delete('/delete/{id}', [BookController::class, 'delete'])->name('book.delete');
-    Route::post('/search', [BookController::class, 'search'])->name('book.search');
-});
 
-Route::group(['prefix' => 'author'], function () {
-    Route::post('/create', [AuthorController::class, 'create'])->name('author.create');
-    Route::put('/update/{id}', [AuthorController::class, 'update'])->name('author.update');
-    Route::delete('/delete/{id}', [AuthorController::class, 'delete'])->name('author.delete');
-});
