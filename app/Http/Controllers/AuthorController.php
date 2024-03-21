@@ -3,14 +3,19 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\CreateAuthorRequest;
-use App\Models\Author;
-use Illuminate\Http\Request;
+use App\Services\AuthorService;
 
 class AuthorController extends Controller
 {
+
+    public function __construct(AuthorService $authorService)
+    {
+        $this->authorService = $authorService;
+    }
+
     public function index()
     {
-        $authors = Author::all();
+        $authors = $this->authorService->getAll();
         return view('authors.index', compact('authors'));
     }
 
@@ -21,26 +26,25 @@ class AuthorController extends Controller
 
     public function store(CreateAuthorRequest $request)
     {
-        Author::create($request->validated());
+        $this->authorService->create($request);
         return redirect()->route('authors.index');
     }
 
     public function edit($id)
     {
-        $author = Author::findOrFail($id);
+        $author = $this->authorService->getOne($id);
         return view('authors.edit', compact('author'));
     }
 
     public function update(CreateAuthorRequest $request, $id)
     {
-        $author = Author::findOrFail($id);
-        $author->update($request->validated());
+        $this->authorService->update($request, $id);
         return redirect()->route('authors.index');
     }
 
     public function destroy($id)
     {
-        Author::findOrFail($id)->delete();
+        $this->authorService->delete($id);
         return redirect()->route('authors.index');
     }
 }
