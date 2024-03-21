@@ -4,26 +4,28 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\CreateBookRequest;
 use App\Models\Author;
+use App\Services\AuthorService;
 use App\Services\BookService;
 use Illuminate\Http\Request;
 
 class BookController extends Controller
 {
-    public function __construct(BookService $bookService)
+    public function __construct(BookService $bookService, AuthorService $authorService)
     {
         $this->bookService = $bookService;
+        $this->authorService = $authorService;
     }
 
     public function index()
     {
-        $books = $this->bookService->getAll(10);
+        $books = $this->bookService->getAllWithPagination(10);
         $authors = Author::all();
         return view('books.index', compact('books', 'authors'));
     }
 
     public function create()
     {
-        $authors = Author::all();
+        $authors = $this->authorService->getAll();
         return view('books.create', compact('authors'));
     }
 
@@ -36,7 +38,7 @@ class BookController extends Controller
     public function edit($id)
     {
         $book = $this->bookService->getOne($id);
-        $authors = Author::all();
+        $authors = $this->authorService->getAll();
         return view('books.edit', compact('book', 'authors'));
     }
 
@@ -61,7 +63,7 @@ class BookController extends Controller
     public function search(Request $request)
     {
         $books = $this->bookService->search($request->keyword);
-        $authors = Author::all();
+        $authors = $this->authorService->getAll();
         return view('books.index', compact('books', 'authors'));
     }
 }

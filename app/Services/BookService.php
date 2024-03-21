@@ -2,14 +2,32 @@
 
 namespace App\Services;
 
+use App\Http\Requests\CreateAuthorRequest;
+use App\Http\Requests\CreateBookRequest;
 use App\Models\Book;
 use App\Models\BookAuthor;
+use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Pagination\LengthAwarePaginator;
 
+/**
+ * Class BookService
+ *
+ * A service class providing methods for managing books in the application.
+ *
+ * @package App\Services
+ */
 class BookService
 {
-    public function create($request)
+    /**
+     * Create a new book.
+     *
+     * @param CreateBookRequest $request
+     * @return Book
+     */
+    public function create(CreateBookRequest $request): Book
     {
         $newBook = new Book($request->validated());
+        $newBook->save();
 
         foreach ($request->authors as $authorId) {
             $bookAuthor = new BookAuthor([
@@ -20,10 +38,18 @@ class BookService
             $bookAuthor->save();
         }
 
-        return $newBook->save();
+
+        return $newBook;
     }
 
-    public function update($request, $id)
+    /**
+     * Update an existing book.
+     *
+     * @param CreateBookRequest $request
+     * @param int $id
+     * @return Book
+     */
+    public function update(CreateBookRequest $request, int $id): Book
     {
         $book = $this->getOne($id);
         $book->update($request->validated());
@@ -39,29 +65,63 @@ class BookService
             $bookAuthor->save();
         }
 
+        $book->save();
+
         return $book;
     }
 
-    public function delete($id)
+    /**
+     * Delete a book.
+     *
+     * @param int $id
+     * @return Book
+     */
+    public function delete(int $id): Book
     {
-        return $this->getOne($id)->delete();
+        $bookToDelete = $this->getOne($id);
+        $bookToDelete->delete();
+        return $bookToDelete;
     }
 
-    public function getOne($id)
+    /**
+     * Get a single book by ID.
+     *
+     * @param int $id
+     * @return Book
+     */
+    public function getOne(int $id): Book
     {
         return Book::with('authors')->findOrFail($id);
     }
 
-    public function getAll($pagination = null)
+    /**
+     * Get all books.
+     *
+     * @return Collection
+     */
+    public function getAll(): Collection
     {
-        if ($pagination) {
-            return Book::with('authors')->paginate($pagination);
-        }
-
         return Book::with('authors')->get();
     }
 
-    public function search($keyword)
+    /**
+     * Get all books with pagination.
+     *
+     * @param int $pagination
+     * @return LengthAwarePaginator
+     */
+    public function getAllWithPagination(int $pagination): LengthAwarePaginator
+    {
+        return Book::with('authors')->paginate($pagination);
+    }
+
+    /**
+     * Search books by keyword.
+     *
+     * @param string $keyword
+     * @return LengthAwarePaginator
+     */
+    public function search(string $keyword): LengthAwarePaginator
     {
         return Book::with('authors')
             ->where('title', 'like', '%' . $keyword . '%')
@@ -73,13 +133,3 @@ class BookService
             ->paginate(10);
     }
 }
-
-
-
-
-
-
-
-
-
-

@@ -2,46 +2,77 @@
 
 namespace App\Services;
 
+use App\Http\Requests\CreateAuthorRequest;
 use App\Models\Author;
+use Illuminate\Database\Eloquent\Collection;
 
+/**
+ * Class AuthorService
+ *
+ * A service class providing methods for managing authors in the application.
+ *
+ * @package App\Services
+ */
 class AuthorService
 {
-
-    public function create($request)
+    /**
+     * Create a new author.
+     *
+     * @param CreateAuthorRequest $request
+     * @return Author
+     */
+    public function create(CreateAuthorRequest $request): Author
     {
         $newAuthor = new Author($request->validated());
-        return $newAuthor->save();
+        $newAuthor->save();
+        return $newAuthor;
     }
 
-    public function update($request, $id)
+    /**
+     * Update an existing author.
+     *
+     * @param CreateAuthorRequest $request
+     * @param int $id
+     * @return Author
+     */
+    public function update(CreateAuthorRequest $request, int $id): Author
     {
         $author = $this->getOne($id);
-        return $author->update($request->validated());
+        $author->update($request->validated());
+        return $author;
     }
 
-    public function delete($id)
+    /**
+     * Delete an author.
+     *
+     * @param int $id
+     * @return Author
+     */
+    public function delete(int $id): Author
     {
-        return $this->getOne($id)->delete();
+        $authorToDelete = $this->getOne($id);
+        $authorToDelete->delete();
+        return $authorToDelete;
     }
 
-    public function getOne($id)
+    /**
+     * Get a single author by ID.
+     *
+     * @param int $id
+     * @return Author
+     */
+    public function getOne(int $id): Author
     {
         return Author::findOrFail($id);
     }
 
-    public function getAll()
+    /**
+     * Get all authors.
+     *
+     * @return Collection
+     */
+    public function getAll(): Collection
     {
         return Author::all();
     }
-
 }
-
-
-
-
-
-
-
-
-
-
